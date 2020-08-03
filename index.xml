@@ -7,10 +7,21 @@
     <generator>Hugo -- gohugo.io</generator>
     <managingEditor>youremail@domain.com (fujiten)</managingEditor>
     <webMaster>youremail@domain.com (fujiten)</webMaster>
-    <lastBuildDate>Mon, 30 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 03 Aug 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://fujiten.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>二度目の投稿!</title>
+      <link>https://fujiten.github.io/post/2020-08-03-second-post/</link>
+      <pubDate>Mon, 03 Aug 2020 00:00:00 +0000</pubDate>
+      <author>youremail@domain.com (fujiten)</author>
+      <guid>https://fujiten.github.io/post/2020-08-03-second-post/</guid>
+      <description>二度目のテスト投稿 これがテストの記事です。
+マークダウンエディタをVSCodeに入れて書いています。
+from datetime import datetime from src.database import db from flask_marshmallow import Marshmallow from flask_marshmallow.fields import fields ma = Marshmallow() class UserAccountModel(db.Model): __tablename__ = &amp;#39;user_accounts&amp;#39; user_id = db.Column(db.Integer, db.ForeignKey(&amp;#39;users.id&amp;#39;), primary_key=True) account_id = db.Column(db.Integer, db.ForeignKey(&amp;#39;accounts.id&amp;#39;), primary_key=True) class UserAccountSchema(ma.ModelSchema): class Meta: model = UserAccountModel createTime = fields.DateTime(&amp;#39;%Y-%m-%dT%H:%M:%S&amp;#39;) updateTime = fields.DateTime(&amp;#39;%Y-%m-%dT%H:%M:%S&amp;#39;) </description>
+    </item>
     
     <item>
       <title>最初の投稿!</title>
