@@ -7,7 +7,13 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <meta name="description" content="クイックジャンプ https://exapmle.com/">
+  <title>Webアプリケーション開発 懸念事項まとめ　（テストs - </title>
+  <meta name="description" content="懸念事項 中規模以上にスケールさせることを目的としたWebアプリケーションを開発するさい、ソフトウェアエンジニアとして考慮すべきことは多くある。
+要件の定義、技術選定
+そもそものビジネスのロジックや解決したい課題、つまりアプリケーションの要件が決まる前後で、プロジェクトのCTOが技術選定を行うことが一般的だ。どのような言語やライブラリやフレームワークを選択すべきか（そもそもフレームワークを使うべきか？）、サーバーを立ち上げるサービスはなににすべきか、などといったことだ。
+これらの事項は、最初に挙げた要件を一番満たしやすいものを選ぶべき、という原則はあるにせよ、実際的には、チームのメンバーにとって「一番開発しやすいエコシステム」を中心として選ぶ事が多い。Railsを使えるメンバーが多ければ、開発したいアプリケーションの要件が多少RailsWayから外れていたとしても、Railsの選定は選択肢の一つとなりうるといった具合だ。
+また、今後の採用のしやすさやチームの成長を見込んで、あえて枯れていないモダンな技術を選定するといった戦略もある。いずれにせよ、技術選定に絶対的な正解はなく、現在のチームの状況に大きく依存することは間違いない。
+from datetime import datetime from src.database import db from flask_marshmallow import Marshmallow from flask_marshmallow.fields import fields ma = Marshmallow() class UserAccountModel(db.Model): __tablename__ = &#39;user_accounts&#39; user_id = db.Column(db.Integer, db.ForeignKey(&#39;users.id&#39;), primary_key=True) account_id = db.Column(db.Integer, db.ForeignKey(&#39;accounts.id&#39;), primary_key=True) class UserAccountSchema(ma.ModelSchema): class Meta: model = UserAccountModel createTime = fields.DateTime(&#39;%Y-%m-%dT%H:%M:%S&#39;) updateTime = fields.DateTime(&#39;%Y-%m-%dT%H:%M:%S&#39;) ">
   <meta name="author" content="fujiten"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -28,14 +34,71 @@
   
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/fujiten.github.io",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/fujiten.github.io\/post\/2020-08-06\/",
+          "name": "Webアプリケーション開発 懸念事項まとめ　（テストs"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "fujiten"
+  },
+  "headline": "Webアプリケーション開発 懸念事項まとめ　（テストs",
+  "description" : "懸念事項 中規模以上にスケールさせることを目的としたWebアプリケーションを開発するさい、ソフトウェアエンジニアとして考慮すべきことは多くある。\n要件の定義、技術選定\nそもそものビジネスのロジックや解決したい課題、つまりアプリケーションの要件が決まる前後で、プロジェクトのCTOが技術選定を行うことが一般的だ。どのような言語やライブラリやフレームワークを選択すべきか（そもそもフレームワークを使うべきか？）、サーバーを立ち上げるサービスはなににすべきか、などといったことだ。\nこれらの事項は、最初に挙げた要件を一番満たしやすいものを選ぶべき、という原則はあるにせよ、実際的には、チームのメンバーにとって「一番開発しやすいエコシステム」を中心として選ぶ事が多い。Railsを使えるメンバーが多ければ、開発したいアプリケーションの要件が多少RailsWayから外れていたとしても、Railsの選定は選択肢の一つとなりうるといった具合だ。\nまた、今後の採用のしやすさやチームの成長を見込んで、あえて枯れていないモダンな技術を選定するといった戦略もある。いずれにせよ、技術選定に絶対的な正解はなく、現在のチームの状況に大きく依存することは間違いない。\nfrom datetime import datetime from src.database import db from flask_marshmallow import Marshmallow from flask_marshmallow.fields import fields ma = Marshmallow() class UserAccountModel(db.Model): __tablename__ = \u0026#39;user_accounts\u0026#39; user_id = db.Column(db.Integer, db.ForeignKey(\u0026#39;users.id\u0026#39;), primary_key=True) account_id = db.Column(db.Integer, db.ForeignKey(\u0026#39;accounts.id\u0026#39;), primary_key=True) class UserAccountSchema(ma.ModelSchema): class Meta: model = UserAccountModel createTime = fields.DateTime(\u0026#39;%Y-%m-%dT%H:%M:%S\u0026#39;) updateTime = fields.DateTime(\u0026#39;%Y-%m-%dT%H:%M:%S\u0026#39;) ",
+  "inLanguage" : "en",
+  "wordCount":  53 ,
+  "datePublished" : "2020-08-03T00:00:00",
+  "dateModified" : "2020-08-03T00:00:00",
+  "image" : "https:\/\/fujiten.github.io\/images\/top_icon.png",
+  "keywords" : [ "" ],
+  "mainEntityOfPage" : "https:\/\/fujiten.github.io\/post\/2020-08-06\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/fujiten.github.io",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/fujiten.github.io\/images\/top_icon.png",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
 
-<meta property="og:description" content="クイックジャンプ https://exapmle.com/">
+<meta property="og:title" content="Webアプリケーション開発 懸念事項まとめ　（テストs" />
+<meta property="og:description" content="懸念事項 中規模以上にスケールさせることを目的としたWebアプリケーションを開発するさい、ソフトウェアエンジニアとして考慮すべきことは多くある。
+要件の定義、技術選定
+そもそものビジネスのロジックや解決したい課題、つまりアプリケーションの要件が決まる前後で、プロジェクトのCTOが技術選定を行うことが一般的だ。どのような言語やライブラリやフレームワークを選択すべきか（そもそもフレームワークを使うべきか？）、サーバーを立ち上げるサービスはなににすべきか、などといったことだ。
+これらの事項は、最初に挙げた要件を一番満たしやすいものを選ぶべき、という原則はあるにせよ、実際的には、チームのメンバーにとって「一番開発しやすいエコシステム」を中心として選ぶ事が多い。Railsを使えるメンバーが多ければ、開発したいアプリケーションの要件が多少RailsWayから外れていたとしても、Railsの選定は選択肢の一つとなりうるといった具合だ。
+また、今後の採用のしやすさやチームの成長を見込んで、あえて枯れていないモダンな技術を選定するといった戦略もある。いずれにせよ、技術選定に絶対的な正解はなく、現在のチームの状況に大きく依存することは間違いない。
+from datetime import datetime from src.database import db from flask_marshmallow import Marshmallow from flask_marshmallow.fields import fields ma = Marshmallow() class UserAccountModel(db.Model): __tablename__ = &#39;user_accounts&#39; user_id = db.Column(db.Integer, db.ForeignKey(&#39;users.id&#39;), primary_key=True) account_id = db.Column(db.Integer, db.ForeignKey(&#39;accounts.id&#39;), primary_key=True) class UserAccountSchema(ma.ModelSchema): class Meta: model = UserAccountModel createTime = fields.DateTime(&#39;%Y-%m-%dT%H:%M:%S&#39;) updateTime = fields.DateTime(&#39;%Y-%m-%dT%H:%M:%S&#39;) ">
 <meta property="og:image" content="https://fujiten.github.io/images/top_icon.png" />
-<meta property="og:url" content="https://fujiten.github.io/" />
+<meta property="og:url" content="https://fujiten.github.io/post/2020-08-06/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="" />
 
-  <meta name="twitter:description" content="クイックジャンプ https://exapmle.com/">
+  <meta name="twitter:title" content="Webアプリケーション開発 懸念事項まとめ　（テストs" />
+  <meta name="twitter:description" content="懸念事項 中規模以上にスケールさせることを目的としたWebアプリケーションを開発するさい、ソフトウェアエンジニアとして考慮すべきことは多くある。
+要件の定義、技術選定
+そもそものビジネスのロジックや解決したい課題、つまりアプリケーションの要件が決まる前後で、プロジェクトのCTOが技術選定を行うことが一般的だ。どのような言語やライブラリやフレームワークを選択すべきか（そもそもフレームワークを使うべき …">
   <meta name="twitter:image" content="https://fujiten.github.io/images/top_icon.png" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@wonder_meet" />
@@ -169,52 +232,14 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <div class="page-heading">
+            <div class="post-heading">
               
-                <h1>Web備忘録</h1>
-              
-              
-                <hr class="small">
+                <h1>Webアプリケーション開発 懸念事項まとめ　（テストs</h1>
               
               
-                
-                  <span class="page-subheading">コンピューターに関する知見</span>
-                
               
               
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-
-    
-  <div role="main" class="container">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        
-          <div class="well">
-            <h2 id="クイックジャンプ">クイックジャンプ</h2>
-<p><a href="https://exapmle.com/">https://exapmle.com/</a></p>
-
-          </div>
-        
-
-        <div class="posts-list">
-          
-          
-            <article class="post-preview">
-    <a href="https://fujiten.github.io/post/2020-08-06/">
-        <h2 class="post-title">Webアプリケーション開発 懸念事項まとめ　（テストs</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
+                <span class="post-meta">
   
   
   <i class="fas fa-calendar"></i>&nbsp;Posted on 2020.8.3
@@ -226,9 +251,20 @@
 </span>
 
 
-    </p>
-    <div class="post-entry">
-        
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
         <h2 id="懸念事項">懸念事項</h2>
 <p>中規模以上にスケールさせることを目的としたWebアプリケーションを開発するさい、ソフトウェアエンジニアとして考慮すべきことは多くある。</p>
 <p>要件の定義、技術選定</p>
@@ -257,141 +293,95 @@
     <span class="n">updateTime</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">DateTime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%S&#39;</span><span class="p">)</span>
 
 </code></pre></div>
-        
-    </div>
-
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://fujiten.github.io/post/2020-08-03-second-post/">
-        <h2 class="post-title">二度目の投稿!</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020.8.3
-  
-  
-  
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <h2 id="二度目のテスト投稿">二度目のテスト投稿</h2>
-<p>これがテストの記事です。</p>
-<p>マークダウンエディタをVSCodeに入れて書いています。</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python">
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">src.database</span> <span class="kn">import</span> <span class="n">db</span>
-<span class="kn">from</span> <span class="nn">flask_marshmallow</span> <span class="kn">import</span> <span class="n">Marshmallow</span>
-<span class="kn">from</span> <span class="nn">flask_marshmallow.fields</span> <span class="kn">import</span> <span class="n">fields</span>
-
-<span class="n">ma</span> <span class="o">=</span> <span class="n">Marshmallow</span><span class="p">()</span>
-
-<span class="k">class</span> <span class="nc">UserAccountModel</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-
-    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;user_accounts&#39;</span>
-
-    <span class="n">user_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;users.id&#39;</span><span class="p">),</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="n">account_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;accounts.id&#39;</span><span class="p">),</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
-<span class="k">class</span> <span class="nc">UserAccountSchema</span><span class="p">(</span><span class="n">ma</span><span class="o">.</span><span class="n">ModelSchema</span><span class="p">):</span>
-    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">UserAccountModel</span>
-    <span class="n">createTime</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">DateTime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%S&#39;</span><span class="p">)</span>
-    <span class="n">updateTime</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">DateTime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%S&#39;</span><span class="p">)</span>
-
-</code></pre></div>
-        
-    </div>
-
-    
-
-</article>
-          
-            <article class="post-preview">
-    <a href="https://fujiten.github.io/post/2020-03-30-first-post/">
-        <h2 class="post-title">最初の投稿!</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
-  
-  
-  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020.3.30
-  
-  
-  
-  
-  
-</span>
-
-
-    </p>
-    <div class="post-entry">
-        
-        <h2 id="テストの記事です">テストの記事です</h2>
-<p>これがテストの記事です。</p>
-<p>マークダウンエディタをVSCodeに入れて書いています。</p>
-<div class="highlight"><pre class="chroma"><code class="language-python" data-lang="python">
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">src.database</span> <span class="kn">import</span> <span class="n">db</span>
-<span class="kn">from</span> <span class="nn">flask_marshmallow</span> <span class="kn">import</span> <span class="n">Marshmallow</span>
-<span class="kn">from</span> <span class="nn">flask_marshmallow.fields</span> <span class="kn">import</span> <span class="n">fields</span>
-
-<span class="n">ma</span> <span class="o">=</span> <span class="n">Marshmallow</span><span class="p">()</span>
-
-<span class="k">class</span> <span class="nc">UserAccountModel</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-
-    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s1">&#39;user_accounts&#39;</span>
-
-    <span class="n">user_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;users.id&#39;</span><span class="p">),</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="n">account_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s1">&#39;accounts.id&#39;</span><span class="p">),</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
-<span class="k">class</span> <span class="nc">UserAccountSchema</span><span class="p">(</span><span class="n">ma</span><span class="o">.</span><span class="n">ModelSchema</span><span class="p">):</span>
-    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">UserAccountModel</span>
-    <span class="n">createTime</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">DateTime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%S&#39;</span><span class="p">)</span>
-    <span class="n">updateTime</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">DateTime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%S&#39;</span><span class="p">)</span>
-
-</code></pre></div>
-        
-    </div>
-
-    
-
-</article>
-          
-        </div>
 
         
-      </div>
-    </div>
+
+        
+            <hr/>
+            <section id="social-share">
+              <div class="list-inline footer-links">
+                
+
+<div class="share-box" aria-hidden="true">
+    <ul class="share">
+      
+      <li>
+        <a href="//twitter.com/share?url=https%3a%2f%2ffujiten.github.io%2fpost%2f2020-08-06%2f&amp;text=Web%e3%82%a2%e3%83%97%e3%83%aa%e3%82%b1%e3%83%bc%e3%82%b7%e3%83%a7%e3%83%b3%e9%96%8b%e7%99%ba%20%e6%87%b8%e5%bf%b5%e4%ba%8b%e9%a0%85%e3%81%be%e3%81%a8%e3%82%81%e3%80%80%ef%bc%88%e3%83%86%e3%82%b9%e3%83%88s&amp;via=wonder_meet" target="_blank" title="Share on Twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2ffujiten.github.io%2fpost%2f2020-08-06%2f" target="_blank" title="Share on Facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//reddit.com/submit?url=https%3a%2f%2ffujiten.github.io%2fpost%2f2020-08-06%2f&amp;title=Web%e3%82%a2%e3%83%97%e3%83%aa%e3%82%b1%e3%83%bc%e3%82%b7%e3%83%a7%e3%83%b3%e9%96%8b%e7%99%ba%20%e6%87%b8%e5%bf%b5%e4%ba%8b%e9%a0%85%e3%81%be%e3%81%a8%e3%82%81%e3%80%80%ef%bc%88%e3%83%86%e3%82%b9%e3%83%88s" target="_blank" title="Share on Reddit">
+          <i class="fab fa-reddit"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2ffujiten.github.io%2fpost%2f2020-08-06%2f&amp;title=Web%e3%82%a2%e3%83%97%e3%83%aa%e3%82%b1%e3%83%bc%e3%82%b7%e3%83%a7%e3%83%b3%e9%96%8b%e7%99%ba%20%e6%87%b8%e5%bf%b5%e4%ba%8b%e9%a0%85%e3%81%be%e3%81%a8%e3%82%81%e3%80%80%ef%bc%88%e3%83%86%e3%82%b9%e3%83%88s" target="_blank" title="Share on LinkedIn">
+          <i class="fab fa-linkedin"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.stumbleupon.com/submit?url=https%3a%2f%2ffujiten.github.io%2fpost%2f2020-08-06%2f&amp;title=Web%e3%82%a2%e3%83%97%e3%83%aa%e3%82%b1%e3%83%bc%e3%82%b7%e3%83%a7%e3%83%b3%e9%96%8b%e7%99%ba%20%e6%87%b8%e5%bf%b5%e4%ba%8b%e9%a0%85%e3%81%be%e3%81%a8%e3%82%81%e3%80%80%ef%bc%88%e3%83%86%e3%82%b9%e3%83%88s" target="_blank" title="Share on StumbleUpon">
+          <i class="fab fa-stumbleupon"></i>
+        </a>
+      </li>
+  
+      
+      <li>
+        <a href="//www.pinterest.com/pin/create/button/?url=https%3a%2f%2ffujiten.github.io%2fpost%2f2020-08-06%2f&amp;description=Web%e3%82%a2%e3%83%97%e3%83%aa%e3%82%b1%e3%83%bc%e3%82%b7%e3%83%a7%e3%83%b3%e9%96%8b%e7%99%ba%20%e6%87%b8%e5%bf%b5%e4%ba%8b%e9%a0%85%e3%81%be%e3%81%a8%e3%82%81%e3%80%80%ef%bc%88%e3%83%86%e3%82%b9%e3%83%88s" target="_blank" title="Share on Pinterest">
+          <i class="fab fa-pinterest"></i>
+        </a>
+      </li>
+    </ul>
   </div>
+  
+
+              </div>
+            </section>
+        
+
+        
+          
+
+          
+        
+      </article>
 
       
-    <div class="page-meta">
-  
-  
-  
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://fujiten.github.io/post/2020-08-03-second-post/" data-toggle="tooltip" data-placement="top" title="二度目の投稿!">&larr; Previous Post</a>
+            </li>
+          
+          
+        </ul>
+      
+
+
+      
+        
+        
+      
+
+    </div>
+  </div>
 </div>
 
-
-  
+      
 <footer>
   <div class="container">
     <div class="row">
@@ -424,7 +414,7 @@
               </li>
           
           <li>
-            <a href="/index.xml" title="RSS">
+            <a href="" title="RSS">
               <span class="fa-stack fa-lg">
                 <i class="fas fa-circle fa-stack-2x"></i>
                 <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
