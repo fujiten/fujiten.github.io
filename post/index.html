@@ -179,7 +179,7 @@
                 <span class="post-meta">
   
   
-  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020.8.3
+  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020.9.25
   
   
   
@@ -203,6 +203,57 @@
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         
         <div class="posts-list">
+          
+            <article class="post-preview">
+    <a href="https://fujiten.github.io/post/2020-09-25-developing_api/">
+        <h2 class="post-title">Webアプリケーション バックエンド RESTfulAPI開発</h2>
+        
+        
+        
+    </a>
+
+    <p class="post-meta">
+        <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020.9.25
+  
+  
+  
+  
+  
+</span>
+
+
+    </p>
+    <div class="post-entry">
+        
+        <h2 id="実装">実装</h2>
+<ul>
+<li>ルーティング</li>
+<li>リクエストパーサーによる値の受け取り</li>
+<li>ビジネスロジックの実装</li>
+<li>値のバリデーション</li>
+<li>値の永続化(DB保存)</li>
+<li>値の返答(JSON)</li>
+</ul>
+<p>一般公開向けのAPIでなく、SPAのための社内のみで使うRESTfulAPIなどは、フロントエンドエンジニアにとっては、「値とHTTPリクエストを送れば適切なJSONを返してくれ、データ永続化などに関してはうまくやっていてくれている」ものであることを望んでおり、そのことを踏まえて、大きく上のようにAPI実装に対して必要な事項をわけました。実際は、認証や、DB設計など、もう少し踏み込んだ部分についても設計の考慮が必要なので、そちらについてもこの記事で扱っていきたいとは思っていますが、まずは、「リクエストからレスポンスまで」の一連の流れをどのように扱っていくか、開発のさいに考慮すべきかという点についてを考えたいと思います。</p>
+<h3 id="ルーティング">ルーティング</h3>
+<p>エンドポイントの設計と、あるエンドポイントに送られてきたHTTPリクエストを解釈し、必要なモジュール(コントローラ)に対して受け渡す責務を負います。</p>
+<p>後者については、ほとんどのライブラリでサポートされているので、そのライブラリが求める実装に乗ればいいでしょう。Railsの場合は、route.rbにまとめて記載すると思われます。</p>
+<p>重要なのは、やはり前者、エンドポイントの設計でしょう。基本的なものはRESTful通りに作ればいいでしょうが、「固有のユースケース」などに対しては、エンドポイントも固有に作成することで対応するのが自分はいいと思っています。</p>
+<p>たとえば、ユーザー検索のエンドポイントは</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">GET /users/search?name=mike
+</code></pre></div><p>といったように、searchといった動詞をエンドポイントに含ませていいと思ってます。
+また、社内用でもあるので、特定のエンドポイントが様々なユースケースに対応する形よりも、エンドポイント自体を多くしたほうが「現存のAPIでフロントが勝手なことしたからユーザーが消えちゃったよ！」みたいな事故が減る確率は上がるため、その点でもメリットが大きいです。
+デメリットは、煩雑になることですかね。</p>
+
+        
+    </div>
+
+    
+
+</article>
           
             <article class="post-preview">
     <a href="https://fujiten.github.io/post/2020-08-06/">

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Webアプリケーション バックエンド RESTfulAPI開発 - </title>
+  <meta name="description" content="実装  ルーティング リクエストパーサーによる値の受け取り ビジネスロジックの実装 値のバリデーション 値の永続化(DB保存) 値の返答(JSON)  一般公開向けのAPIでなく、SPAのための社内のみで使うRESTfulAPIなどは、フロントエンドエンジニアにとっては、「値とHTTPリクエストを送れば適切なJSONを返してくれ、データ永続化などに関してはうまくやっていてくれている」ものであることを望んでおり、そのことを踏まえて、大きく上のようにAPI実装に対して必要な事項をわけました。実際は、認証や、DB設計など、もう少し踏み込んだ部分についても設計の考慮が必要なので、そちらについてもこの記事で扱っていきたいとは思っていますが、まずは、「リクエストからレスポンスまで」の一連の流れをどのように扱っていくか、開発のさいに考慮すべきかという点についてを考えたいと思います。
+ルーティング エンドポイントの設計と、あるエンドポイントに送られてきたHTTPリクエストを解釈し、必要なモジュール(コントローラ)に対して受け渡す責務を負います。
+後者については、ほとんどのライブラリでサポートされているので、そのライブラリが求める実装に乗ればいいでしょう。Railsの場合は、route.rbにまとめて記載すると思われます。
+重要なのは、やはり前者、エンドポイントの設計でしょう。基本的なものはRESTful通りに作ればいいでしょうが、「固有のユースケース」などに対しては、エンドポイントも固有に作成することで対応するのが自分はいいと思っています。
+たとえば、ユーザー検索のエンドポイントは
+GET /users/search?name=mike といったように、searchといった動詞をエンドポイントに含ませていいと思ってます。 また、社内用でもあるので、特定のエンドポイントが様々なユースケースに対応する形よりも、エンドポイント自体を多くしたほうが「現存のAPIでフロントが勝手なことしたからユーザーが消えちゃったよ！」みたいな事故が減る確率は上がるため、その点でもメリットが大きいです。 デメリットは、煩雑になることですかね。">
+  <meta name="author" content="fujiten"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "",
+    
+    "url": "https:\/\/fujiten.github.io"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/fujiten.github.io"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/fujiten.github.io",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/fujiten.github.io\/post\/2020-09-25-developing_api\/",
+          "name": "Webアプリケーション バックエンド r e s tful a p i開発"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "fujiten"
+  },
+  "headline": "Webアプリケーション バックエンド RESTfulAPI開発",
+  "description" : "実装  ルーティング リクエストパーサーによる値の受け取り ビジネスロジックの実装 値のバリデーション 値の永続化(DB保存) 値の返答(JSON)  一般公開向けのAPIでなく、SPAのための社内のみで使うRESTfulAPIなどは、フロントエンドエンジニアにとっては、「値とHTTPリクエストを送れば適切なJSONを返してくれ、データ永続化などに関してはうまくやっていてくれている」ものであることを望んでおり、そのことを踏まえて、大きく上のようにAPI実装に対して必要な事項をわけました。実際は、認証や、DB設計など、もう少し踏み込んだ部分についても設計の考慮が必要なので、そちらについてもこの記事で扱っていきたいとは思っていますが、まずは、「リクエストからレスポンスまで」の一連の流れをどのように扱っていくか、開発のさいに考慮すべきかという点についてを考えたいと思います。\nルーティング エンドポイントの設計と、あるエンドポイントに送られてきたHTTPリクエストを解釈し、必要なモジュール(コントローラ)に対して受け渡す責務を負います。\n後者については、ほとんどのライブラリでサポートされているので、そのライブラリが求める実装に乗ればいいでしょう。Railsの場合は、route.rbにまとめて記載すると思われます。\n重要なのは、やはり前者、エンドポイントの設計でしょう。基本的なものはRESTful通りに作ればいいでしょうが、「固有のユースケース」などに対しては、エンドポイントも固有に作成することで対応するのが自分はいいと思っています。\nたとえば、ユーザー検索のエンドポイントは\nGET \/users\/search?name=mike といったように、searchといった動詞をエンドポイントに含ませていいと思ってます。 また、社内用でもあるので、特定のエンドポイントが様々なユースケースに対応する形よりも、エンドポイント自体を多くしたほうが「現存のAPIでフロントが勝手なことしたからユーザーが消えちゃったよ！」みたいな事故が減る確率は上がるため、その点でもメリットが大きいです。 デメリットは、煩雑になることですかね。",
+  "inLanguage" : "en",
+  "wordCount":  18 ,
+  "datePublished" : "2020-09-25T00:00:00",
+  "dateModified" : "2020-09-25T00:00:00",
+  "image" : "https:\/\/fujiten.github.io\/images\/top_icon.png",
+  "keywords" : [ "" ],
+  "mainEntityOfPage" : "https:\/\/fujiten.github.io\/post\/2020-09-25-developing_api\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/fujiten.github.io",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/fujiten.github.io\/images\/top_icon.png",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="Webアプリケーション バックエンド RESTfulAPI開発" />
+<meta property="og:description" content="実装  ルーティング リクエストパーサーによる値の受け取り ビジネスロジックの実装 値のバリデーション 値の永続化(DB保存) 値の返答(JSON)  一般公開向けのAPIでなく、SPAのための社内のみで使うRESTfulAPIなどは、フロントエンドエンジニアにとっては、「値とHTTPリクエストを送れば適切なJSONを返してくれ、データ永続化などに関してはうまくやっていてくれている」ものであることを望んでおり、そのことを踏まえて、大きく上のようにAPI実装に対して必要な事項をわけました。実際は、認証や、DB設計など、もう少し踏み込んだ部分についても設計の考慮が必要なので、そちらについてもこの記事で扱っていきたいとは思っていますが、まずは、「リクエストからレスポンスまで」の一連の流れをどのように扱っていくか、開発のさいに考慮すべきかという点についてを考えたいと思います。
+ルーティング エンドポイントの設計と、あるエンドポイントに送られてきたHTTPリクエストを解釈し、必要なモジュール(コントローラ)に対して受け渡す責務を負います。
+後者については、ほとんどのライブラリでサポートされているので、そのライブラリが求める実装に乗ればいいでしょう。Railsの場合は、route.rbにまとめて記載すると思われます。
+重要なのは、やはり前者、エンドポイントの設計でしょう。基本的なものはRESTful通りに作ればいいでしょうが、「固有のユースケース」などに対しては、エンドポイントも固有に作成することで対応するのが自分はいいと思っています。
+たとえば、ユーザー検索のエンドポイントは
+GET /users/search?name=mike といったように、searchといった動詞をエンドポイントに含ませていいと思ってます。 また、社内用でもあるので、特定のエンドポイントが様々なユースケースに対応する形よりも、エンドポイント自体を多くしたほうが「現存のAPIでフロントが勝手なことしたからユーザーが消えちゃったよ！」みたいな事故が減る確率は上がるため、その点でもメリットが大きいです。 デメリットは、煩雑になることですかね。">
+<meta property="og:image" content="https://fujiten.github.io/images/top_icon.png" />
+<meta property="og:url" content="https://fujiten.github.io/post/2020-09-25-developing_api/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="" />
+
+  <meta name="twitter:title" content="Webアプリケーション バックエンド RESTfulAPI開発" />
+  <meta name="twitter:description" content="実装  ルーティング リクエストパーサーによる値の受け取り ビジネスロジックの実装 値のバリデーション 値の永続化(DB保存) 値の返答(JSON)  一般公開向けのAPIでなく、SPAのための社内のみで使うRESTfulAPIなどは、フロントエンドエンジニアにとっては、「値とHTTPリクエストを送れば適切なJSONを返してくれ、データ永続化などに関してはうまくやっていてくれている」ものであること …">
+  <meta name="twitter:image" content="https://fujiten.github.io/images/top_icon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@wonder_meet" />
+  <meta name="twitter:creator" content="@wonder_meet" />
+  <link href='https://fujiten.github.io/imgaes/favicon.png' rel='icon' type='image/x-icon'/>
+  <meta name="generator" content="Hugo 0.69.0" />
+  <link rel="alternate" href="https://fujiten.github.io/index.xml" type="application/rss+xml" title=""><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="https://fujiten.github.io/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="https://fujiten.github.io/css/highlight.min.css" /><link rel="stylesheet" href="https://fujiten.github.io/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://fujiten.github.io"></a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/page/about/">About</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+      <div class="avatar-container">
+        <div class="avatar-img-border">
+          <a title="" href="https://fujiten.github.io">
+            <img class="avatar-img" src="https://fujiten.github.io/images/top_icon.png" alt="" />
+          </a>
+        </div>
+      </div>
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1>Webアプリケーション バックエンド RESTfulAPI開発</h1>
+              
+              
+              
+              
+                <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;Posted on 2020.9.25
+  
+  
+  
+  
+  
+</span>
+
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <h2 id="実装">実装</h2>
+<ul>
+<li>ルーティング</li>
+<li>リクエストパーサーによる値の受け取り</li>
+<li>ビジネスロジックの実装</li>
+<li>値のバリデーション</li>
+<li>値の永続化(DB保存)</li>
+<li>値の返答(JSON)</li>
+</ul>
+<p>一般公開向けのAPIでなく、SPAのための社内のみで使うRESTfulAPIなどは、フロントエンドエンジニアにとっては、「値とHTTPリクエストを送れば適切なJSONを返してくれ、データ永続化などに関してはうまくやっていてくれている」ものであることを望んでおり、そのことを踏まえて、大きく上のようにAPI実装に対して必要な事項をわけました。実際は、認証や、DB設計など、もう少し踏み込んだ部分についても設計の考慮が必要なので、そちらについてもこの記事で扱っていきたいとは思っていますが、まずは、「リクエストからレスポンスまで」の一連の流れをどのように扱っていくか、開発のさいに考慮すべきかという点についてを考えたいと思います。</p>
+<h3 id="ルーティング">ルーティング</h3>
+<p>エンドポイントの設計と、あるエンドポイントに送られてきたHTTPリクエストを解釈し、必要なモジュール(コントローラ)に対して受け渡す責務を負います。</p>
+<p>後者については、ほとんどのライブラリでサポートされているので、そのライブラリが求める実装に乗ればいいでしょう。Railsの場合は、route.rbにまとめて記載すると思われます。</p>
+<p>重要なのは、やはり前者、エンドポイントの設計でしょう。基本的なものはRESTful通りに作ればいいでしょうが、「固有のユースケース」などに対しては、エンドポイントも固有に作成することで対応するのが自分はいいと思っています。</p>
+<p>たとえば、ユーザー検索のエンドポイントは</p>
+<div class="highlight"><pre class="chroma"><code class="language-fallback" data-lang="fallback">GET /users/search?name=mike
+</code></pre></div><p>といったように、searchといった動詞をエンドポイントに含ませていいと思ってます。
+また、社内用でもあるので、特定のエンドポイントが様々なユースケースに対応する形よりも、エンドポイント自体を多くしたほうが「現存のAPIでフロントが勝手なことしたからユーザーが消えちゃったよ！」みたいな事故が減る確率は上がるため、その点でもメリットが大きいです。
+デメリットは、煩雑になることですかね。</p>
+
+
+        
+
+        
+
+        
+          
+
+          
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://fujiten.github.io/post/2020-08-06/" data-toggle="tooltip" data-placement="top" title="Webアプリケーション開発 懸念事項まとめ">&larr; Previous Post</a>
+            </li>
+          
+          
+        </ul>
+      
+
+
+      
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+      
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="mailto:youremail@domain.com" title="Email me">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://github.com/fujiten" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/wonder_meet" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            <a href="" title="RSS">
+              <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              fujiten
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2020
+          
+
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="https://gohugo.io">Hugo v0.69.0</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="https://fujiten.github.io/js/main.js"></script>
+<script src="https://fujiten.github.io/js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> $(document).ready(function() {$("pre.chroma").css("padding","0");}); </script><script> renderMathInElement(document.body); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://fujiten.github.io/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+
